@@ -1,4 +1,6 @@
-FROM wardenenv/mariadb:10.6 as mariadb-setup
+ARG DB_VERSION
+
+FROM wardenenv/mariadb:${DB_VERSION} as mariadb-setup
 
 ENV DB_NAME magento
 ENV DB_PASS magento
@@ -14,7 +16,7 @@ RUN chmod +x /usr/local/bin/docker-build-data.sh
 RUN ["docker-build-data.sh", "docker-entrypoint.sh", \
      "mariadbd", "--datadir", "/setup-db/", "--aria-log-dir-path", "/setup-db/"]
 
-FROM wardenenv/mariadb:10.6
+FROM wardenenv/mariadb:${DB_VERSION}
 
 ENV DB_NAME magento
 ENV DB_PASS magento

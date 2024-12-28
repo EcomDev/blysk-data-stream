@@ -1,4 +1,6 @@
-FROM wardenenv/mysql:8.0 as mysql-setup
+ARG DB_VERSION
+
+FROM wardenenv/mysql:${DB_VERSION} as mysql-setup
 
 ENV DB_NAME magento
 ENV DB_PASS magento
@@ -14,7 +16,7 @@ COPY docker-build-data.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-build-data.sh
 RUN ["docker-build-data.sh", "docker-entrypoint.sh", "mysqld", "--datadir", "/setup-db/"]
 
-FROM wardenenv/mysql:8.0
+FROM wardenenv/mysql:${DB_VERSION}
 
 ENV MYSQL_DATABASE magento
 ENV MYSQL_PASSWORD magento
