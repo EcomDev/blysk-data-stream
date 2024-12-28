@@ -11,10 +11,10 @@ ENV MYSQL_INIT_ONLY 1
 COPY sample.db.sql /docker-entrypoint-initdb.d/
 
 USER root
-RUN mkdir "/setup-db/" && chown -R mysql:root "/setup-db/"
+RUN mkdir -p "/setup/db" && chown -R mysql:root "/setup/db"
 USER mysql
 
-RUN ["/docker-entrypoint.sh", "mysqld", "--datadir", "/setup-db/"]
+RUN ["/docker-entrypoint.sh", "mysqld", "--datadir", "/setup/db"]
 
 FROM percona/percona-server:${DB_VERSION}-multi
 
@@ -23,4 +23,4 @@ ENV MYSQL_PASSWORD magento
 ENV MYSQL_ROOT_PASSWORD magento
 ENV MYSQL_USER magento
 
-COPY --from=mysql-setup /setup-db /var/lib/mysql
+COPY --from=mysql-setup /setup/db /var/lib/mysql
