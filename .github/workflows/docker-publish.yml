@@ -22,7 +22,7 @@ jobs:
       max-parallel: 1
       matrix:
         DB_TYPE:
-          - mysql
+          #- mysql
           - mariadb
     runs-on: ubuntu-latest
     permissions:
