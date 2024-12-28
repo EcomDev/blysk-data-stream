@@ -7,6 +7,7 @@ ENV DB_USER magento
 # Prevent executing server on build run
 RUN ["sed", "-i", "s/exec \"$@\"//", "/usr/local/bin/docker-entrypoint.sh"]
 
+RUN mkdir /setup-db
 COPY sample.db.sql /docker-entrypoint-initdb.d/
 COPY docker-build-data.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-build-data.sh
@@ -14,6 +15,10 @@ RUN ["docker-build-data.sh", "docker-entrypoint.sh", \
      "mariadbd", "--datadir", "/setup-db", "--aria-log-dir-path", "/setup-db"]
 
 FROM wardenenv/mariadb:10.6
+
+ENV DB_NAME magento
+ENV DB_PASS magento
+ENV DB_USER magento
 
 ENV MYSQL_DATABASE=$DB_NAME
 ENV MYSQL_PASSWORD=$DB_PASS
