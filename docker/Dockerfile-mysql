@@ -11,10 +11,14 @@ ENV MYSQL_INIT_ONLY 1
 COPY sample.db.sql /docker-entrypoint-initdb.d/
 
 USER root
-RUN mkdir -p "/setup/db" && chown -R mysql:root "/setup/db"
+RUN /usr/bin/install -m 0775 -o mysql -g root -d /setup/
 USER mysql
 
-RUN ["/docker-entrypoint.sh", "mysqld", "--datadir", "/setup/db"]
+RUN ["/docker-entrypoint.sh", "mysqld"]
+
+USER root
+RUN mv /var/lib/mysql /setup/db
+USER mysql
 
 FROM percona/percona-server:${DB_VERSION}-multi
 
