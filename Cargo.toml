@@ -1,0 +1,20 @@
+[workspace]
+resolver = "2"
+members = [
+    "blysk-data-stream-core"
+]
+
+[workspace.dependencies]
+sqlx = { version = "0.8", features = ["mysql", "runtime-tokio-rustls", "rust_decimal"] }
+tokio = { version = "1", default-features = false }
+thiserror = { version = "2" }
+
+
+[profile.release]
+opt-level = 3
+lto = true
+
+[profile.test]
+opt-level = 0
+codegen-units = 1
+lto = false
