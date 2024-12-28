@@ -1,22 +1,22 @@
 ARG DB_VERSION
 
-FROM wardenenv/mysql:${DB_VERSION} as mysql-setup
+FROM percona/percona-server:${DB_VERSION}-multi as mysql-setup
 
-ENV DB_NAME magento
-ENV DB_PASS magento
-ENV DB_USER magento
-
-# Prevent executing server on build run
-RUN ["sed", "-i", "s/exec \"$@\"//", "/usr/local/bin/docker-entrypoint.sh"]
-RUN mkdir /setup-db/ && chown mysql:mysql /setup-db/ && chmod 0777 /setup-db/
+ENV MYSQL_DATABASE magento
+ENV MYSQL_PASSWORD magento
+ENV MYSQL_ROOT_PASSWORD magento
+ENV MYSQL_USER magento
+ENV MYSQL_INIT_ONLY 1
 
 COPY sample.db.sql /docker-entrypoint-initdb.d/
-COPY docker-build-data.sh /usr/local/bin/
 
-RUN chmod +x /usr/local/bin/docker-build-data.sh
-RUN ["docker-build-data.sh", "docker-entrypoint.sh", "mysqld", "--datadir", "/setup-db/"]
+USER root
+RUN mkdir "/setup-db/" && chown -R mysql:root "/setup-db/"
+USER mysql
 
-FROM wardenenv/mysql:${DB_VERSION}
+RUN ["/docker-entrypoint.sh", "mysqld", "--datadir", "/setup-db/"]
+
+FROM percona/percona-server:${DB_VERSION}-multi
 
 ENV MYSQL_DATABASE magento
 ENV MYSQL_PASSWORD magento

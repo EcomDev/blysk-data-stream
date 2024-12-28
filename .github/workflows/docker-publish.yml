@@ -23,13 +23,7 @@ jobs:
       matrix:
         include:
           - DB_TYPE: "mysql"
-            DB_VERSION: "8.1"
-          - DB_TYPE: "mysql"
-            DB_VERSION: "8.2"
-          - DB_TYPE: "mysql"
-            DB_VERSION: "8.3"
-          - DB_TYPE: "mysql"
-            DB_VERSION: "8.4"
+            DB_VERSION: "8.4.3-3.1"
           - DB_TYPE: "mariadb"
             DB_VERSION: "10.6"
           - DB_TYPE: "mariadb"
