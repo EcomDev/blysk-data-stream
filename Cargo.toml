@@ -1,14 +1,16 @@
 [workspace]
 resolver = "2"
 members = [
+    "blysk-data-backup",
     "blysk-data-stream-core"
 ]
 
 [workspace.dependencies]
-sqlx = { version = "0.8", features = ["mysql", "runtime-tokio-rustls", "rust_decimal"] }
+sqlx = { version = "0.8", features = [ "runtime-tokio", "tls-rustls-ring-native-roots", "mysql" ] }
 tokio = { version = "1", default-features = false }
 thiserror = { version = "2" }
-
+rust_decimal = "1.*"
+testcontainers-magento-data = "0.1"
 
 [profile.release]
 opt-level = 3

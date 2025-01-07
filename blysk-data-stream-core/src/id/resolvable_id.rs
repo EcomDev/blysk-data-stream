@@ -1,5 +1,5 @@
-use std::sync::Arc;
 use crate::id::{Id, Notifier};
+use std::sync::Arc;
 use tokio::sync::oneshot;
 
 #[derive(Clone)]
@@ -38,8 +38,8 @@ impl ResolvableId {
                     },
                     Err(_) => return None,
                 }
-            },
-            ResolvableId::Unresolved(id, _) => id
+            }
+            ResolvableId::Unresolved(id, _) => id,
         };
 
         id.load()
@@ -48,12 +48,12 @@ impl ResolvableId {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tokio::task::spawn;
     use tokio::sync::mpsc;
+    use tokio::task::spawn;
 
     struct Channel {
         tx: Notifier,
-        rx: Option<mpsc::Receiver<oneshot::Sender<()>>>
+        rx: Option<mpsc::Receiver<oneshot::Sender<()>>>,
     }
 
     impl Channel {
@@ -66,7 +66,7 @@ mod tests {
         fn watch(&mut self, callback: impl Future + Send + 'static) {
             if let Some(mut rx) = self.rx.take() {
                 spawn(async move {
-                    let mut response: oneshot::Sender<()> = rx.recv().await.unwrap();
+                    let response: oneshot::Sender<()> = rx.recv().await.unwrap();
                     callback.await;
                     response.send(()).unwrap();
                 });

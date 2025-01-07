@@ -1,5 +1,4 @@
 use std::fmt::Formatter;
-use sqlx::mysql::MySqlArguments;
 use thiserror::Error;
 
 #[derive(Debug)]
@@ -53,7 +52,10 @@ mod tests {
     #[test]
     fn formats_an_error_for_singular_field_not_found() {
         assert_eq!(
-            format!("{}", IdError::IdNotFound(IdErrorField::SingleField("sku", "sku1".to_string()))),
+            format!(
+                "{}",
+                IdError::IdNotFound(IdErrorField::SingleField("sku", "sku1".to_string()))
+            ),
             r#"Not found mapped identifier for `sku` equal to "sku1""#
         )
     }
@@ -61,7 +63,13 @@ mod tests {
     #[test]
     fn formats_an_error_for_multiple_fields_not_found() {
         assert_eq!(
-            format!("{}", IdError::IdNotFound(IdErrorField::MultipleFields(vec!["sku", "type_id"], vec!["sku1".to_string(), "simple".to_string()]))),
+            format!(
+                "{}",
+                IdError::IdNotFound(IdErrorField::MultipleFields(vec!["sku", "type_id"], vec![
+                    "sku1".to_string(),
+                    "simple".to_string()
+                ]))
+            ),
             r#"Not found mapped identifier for (`sku`, `type_id`) matching ("sku1", "simple")"#
         )
     }

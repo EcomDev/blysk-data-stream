@@ -1,5 +1,3 @@
 pub mod id;
 
-fn test() {
-
-}
+fn test() {}

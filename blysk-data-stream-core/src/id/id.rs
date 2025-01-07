@@ -27,7 +27,7 @@ impl Id {
 
     pub(super) fn load(&self) -> Option<u64> {
         if self.has_value.load(Ordering::Relaxed) {
-            return Some(self.id.load(Ordering::Relaxed))
+            return Some(self.id.load(Ordering::Relaxed));
         }
 
         None
