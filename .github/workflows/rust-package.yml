@@ -1,0 +1,68 @@
+name: Rust Package
+env:
+  CARGO_TERM_COLOR: always
+  MSRV: '1.85.0'
+on:
+  push:
+  pull_request:
+  workflow_call:
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@beta
+        with:
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+        with:
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+      - name: Check
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+      - name: rustfmt
+        run: cargo fmt --all --check
+
+  check-docs:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+      - uses: Swatinem/rust-cache@v2
+        with:
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+      - name: cargo doc
+        run: cargo doc --all-features --no-deps
+
+  test-versions:
+    needs: check
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        rust: [ nightly ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+        with:
+          toolchain: ${{ matrix.rust }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+      - name: Run tests
+        run: cargo test --workspace --all-features --all-targets
+
+  deny-check:
+    name: cargo-deny check
+    runs-on: ubuntu-24.04
+    continue-on-error: ${{ matrix.checks == 'advisories' }}
+    strategy:
+      matrix:
+        checks:
+          - advisories
+          - bans licenses sources
+    steps:
+      - uses: actions/checkout@v4
+      - uses: EmbarkStudios/cargo-deny-action@v1
+        with:
+          command: check ${{ matrix.checks }}
+          manifest-path: ./Cargo.toml
+          rust-version: ${{ env.MSRV }}
